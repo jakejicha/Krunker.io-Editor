@@ -3,6 +3,11 @@
 console.warn = (text) => {};
 console.info = (text) => {};
 
+// PREVENT MISHAPS:
+window.onbeforeunload = function() {
+    return true;
+};
+
 // STORAGE:
 var canStore = (typeof(Storage) !== "undefined");
 window.saveVal = function(name, val) {
