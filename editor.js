@@ -852,6 +852,95 @@ const editor = {
             alert("Failed to import map with error:\n" + e.toString());
         }
     },
+    
+    // OBJECT REPLACEMENT
+    replaceObject(str) {
+        // Replace the object passed in or the selected object
+        let object = this.transformControl.object;
+        if (object) {
+            
+            // Parse the map
+            try {
+                
+                // Remove the selected object
+                this.removeObject(object);
+                
+                let data = JSON.parse(str);
+                data = data.objects ? data.objects : data
+                
+                // Find center of objects
+                let center = this.findCenter(data)
+                
+                // Correct position of the objects
+                for (let obj of data) {
+                    obj.p[0] += object.userData.owner.position.x - center[0]
+                    obj.p[1] += object.userData.owner.position.y - (object.scale.y / 2) - center[1]
+                    obj.p[2] += object.userData.owner.position.z - center[2]
+                    
+                    this.addObject(ObjectInstance.deserialize(obj))
+                }
+            } catch (e) {
+                console.log(e);
+                alert("Failed to replace object with error:\n" + e.toString());
+            }
+        } else {
+            console.log("No object to replace.");
+        }  
+    },
+    importObject(fromfile = false) {
+        if (fromfile) {
+            // Create File input Dialog
+            let file = document.createElement('input');
+            file.type = 'file';
+            file.id = 'file_input';
+            
+            let self = this;
+            file.addEventListener('change', ev => {
+                let files = ev.target.files;
+                if (files.length != 1) return alert('Please select 1 file');
+                let f = files[0];
+                let reader = new FileReader();
+
+                reader.onload = (theFile => {
+                    return e => {
+                        self.replaceObject(e.target.result);
+                    };
+                })(f);
+
+                reader.readAsText(f);
+            }, false);
+            
+            file.type = 'file';
+            file.id = 'file_input';
+            file.click();
+            return;
+        }
+        
+        // Prompt to get text
+        let objectRaw = prompt("Copy Paste Object Text Here", "");
+        if (!objectRaw || objectRaw == "") return;
+        
+        // Replace Object with inputed text
+        this.replaceObject(objectRaw)
+    },
+    findCenter(data) {
+        let min = data[0].p[1],
+        xMin = data[0].p[0] - (data[0].s[0] /2),
+        xMax = data[0].p[0] + (data[0].s[0] /2),
+        yMin = data[0].p[2] - (data[0].s[2] /2),
+        yMax = data[0].p[2] + (data[0].s[2] /2)
+
+
+        for (let obj of data) {
+            if (obj.p[1]  < min) min = obj.p[1]
+            if (obj.p[0] - (obj.s[0] /2) < xMin) xMin = obj.p[0] - (obj.s[0] /2)
+            if (obj.p[0] + (obj.s[0] /2) > xMax) xMax = obj.p[0] + (obj.s[0] /2)
+            if (obj.p[2] - (obj.s[2] /2) < yMin) yMin = obj.p[2] - (obj.s[2] /2)
+            if (obj.p[2] + (obj.s[2] /2) > yMax) yMax = obj.p[2] + (obj.s[2] /2)
+        }
+
+        return [Math.round((xMin + xMax)/2), min, Math.round((yMin + yMax)/2)]
+    },
 
     // TRANSFORM MANAGEMENT:
     attachTransform(object) {
