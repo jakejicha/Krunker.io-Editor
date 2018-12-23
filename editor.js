@@ -444,16 +444,16 @@ const editor = {
         mapGUI.add(this.mapConfig, "name").name("Name").listen();
         mapGUI.add(this.mapConfig, "modURL").name("Mod URL").listen();
 
-        mapGUI.addColor(this.mapConfig, "ambient").name("Ambient Light").listen().onChange(v => {
+        mapGUI.addColor(this.mapConfig, "ambient").name("Ambient Light").onChange(v => {
             this.ambientLight.color.set(v);
         });
-        mapGUI.addColor(this.mapConfig, "sky").name("Sky Color").listen().onChange(v => {
+        mapGUI.addColor(this.mapConfig, "sky").name("Sky Color").onChange(v => {
             this.scene.background = new THREE.Color(v);
         });
-        mapGUI.addColor(this.mapConfig, "light").name("Light Color").listen().onChange(v => {
+        mapGUI.addColor(this.mapConfig, "light").name("Light Color").onChange(v => {
             this.skyLight.color.set(v);
         });
-        mapGUI.addColor(this.mapConfig, "fog").name("Fog Color").listen().onChange(v => {
+        mapGUI.addColor(this.mapConfig, "fog").name("Fog Color").onChange(v => {
             this.scene.fog.color.set(v);
         });
         mapGUI.add(this.mapConfig, "fogD", 10, 2000).name("Fog Distance").listen().onChange(v => {
