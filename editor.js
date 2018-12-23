@@ -676,6 +676,9 @@ const editor = {
                 case 80: // p
                     this.addPlaceholder();
                     break;
+                case 82: // r
+                    ev.shiftKey && this.duplicateObject()
+                    break;
             }
         });
 
