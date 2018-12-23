@@ -673,6 +673,9 @@ const editor = {
                 case 46: // delete, backspace
                     this.removeObject();
                     break;
+                case 80: // p
+                    this.addPlaceholder();
+                    break;
             }
         });
 
@@ -940,6 +943,15 @@ const editor = {
         }
 
         return [Math.round((xMin + xMax)/2), min, Math.round((yMin + yMax)/2)]
+    },
+    
+    // PLACEHOLDER
+    addPlaceholder() {
+        // Get camera position
+        let pos = this.camera.getWorldPosition()
+        
+        // Create Object on camera position to use as placeholder
+        this.addObject(new ObjectInstance({p: [pos.x, pos.y - 10, pos.z], s: [10, 10, 10], e: 16777215, o: 0.3, c: 0}))
     },
 
     // TRANSFORM MANAGEMENT:
